@@ -284,7 +284,18 @@ function parseDnsResponse(buffer, domain) {
 // === Constructing DNS Responses ===
 function buildDnsResponse(query, json, includeEdns) {
     const header = query.slice(0, 12);
-    const question = query.slice(12);
+    // const question = query.slice(12);
+    const question = [];
+    for (var i = 12; i < query.length; i++) {
+        question.push(query[i]);
+        if (query[i] === 0) {
+            question.push(query[i+1]);
+            question.push(query[i+2]);
+            question.push(query[i+3]);
+            question.push(query[i+4]);
+            break;
+        }
+    }
 
     const id = header.slice(0, 2);
     const flags = new Uint8Array([0x81, 0x80]); // Standard Response + Recursion
